@@ -49,17 +49,18 @@
       </nav>
 
       <div>
-        <form action="#" method="post" class="formulaire-Connexion">
+        <form action="connexion_traitement.php" method="post" class="formulaire-Connexion">
             <div class="form-group">
                 <label for="email">Email:</label>
-                <input type="email" id="email" placeholder="email" required />
+                <input type="email" id="email" placeholder="email" name="email" required />
             </div>
             <div class="form-group">
-                <label for="password">Mot de passe:</label>
-                <input type="password" id="password" placeholder="mot de passe" required >
+                <label for="mot_de_passe">Mot de passe:</label>
+                <input type="password" id="password" placeholder="mot de passe" name="mot_de_passe" required >
             </div>
             <div>
-                <a class="btn">Se connecter</a>
+                
+        <input type="submit" value="Se connecter"   class="btn">
             </div>
             <a href="MotDePasseOublie.php" class="Mot-DePasse-Oublie">Mot de passe oublié ?</a>
         </form>

@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="fr">
   <head>
@@ -48,36 +50,39 @@
           </ul>
         </div>
       </nav>
-    <form action="inscription_traitement.php" method="post">
-      <h2 class="Titre-Inscription">S'inscrire</h2>
-      <div>
-        <input type="text" name="nom" placeholder="Nom" required />
-        <input type="text" name="prenom" placeholder="Prénom" required />
-      </div>
-      <div>
-        <input type="email" name="email" placeholder="Email" required />
-        <input type="tel" name="telephone" placeholder="Téléphone" required />
-      </div>
-      <div>
-        <input
-          type="text"
-          name="profession"
-          placeholder="Profession"
-          required
-        />
-        <input
-          type="password"
-          name="mot_de_passe"
-          placeholder="Mot de passe"
-          required
-        />
-      </div>
-      <button type="submit">s'inscrire</button>
-      <p>
-        Vos données personnelles ne sont utilisées qu'à des fins
-        d'authentification et ne sont pas partagées avec des tiers
-        <a href="EnSavoirPlus.php">(En savoir plus)</a>
-      </p>
-    </form>
   </body>
-</html>
+</html><br>
+<?php
+// Connexion à la base de données
+$serveur = "localhost";
+$utilisateur = "root";
+$mot_de_passe = "";
+$base_de_donnees = "private_crm";
+
+$connexion = new mysqli($serveur, $utilisateur, $mot_de_passe, $base_de_donnees);
+
+// Vérification de la connexion
+if ($connexion->connect_error) {
+    die("La connexion a échoué : " . $connexion->connect_error);
+}
+
+// Récupération des données du formulaire
+$nom = $_POST['nom'];
+$prenom = $_POST['prenom'];
+$email = $_POST['email'];
+$telephone = $_POST['telephone'];
+$profession = $_POST['profession'];
+$mot_de_passe = password_hash($_POST['mot_de_passe'], PASSWORD_DEFAULT);
+
+// Insertion des données dans la base de données
+$sql = "INSERT INTO utilisateurs (nom, prenom, email, telephone, profession, mot_de_passe) VALUES ('$nom', '$prenom', '$email', '$telephone', '$profession', '$mot_de_passe')";
+
+if ($connexion->query($sql) === TRUE) {
+    echo "	&nbsp; Inscription réussie ! connectez-vous à l'aide de votre e-mail et mot de passe";
+} else {
+    echo "Erreur : " . $sql . "<br>" . $connexion->error;
+}
+
+// Fermeture de la connexion
+$connexion->close();
+?>

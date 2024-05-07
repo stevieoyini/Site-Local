@@ -1,3 +1,16 @@
+
+<?php
+session_start();
+
+// Vérification de la session utilisateur
+if (!isset($_SESSION['email'])) {
+    // Redirection vers la page de connexion si l'utilisateur n'est pas connecté
+    header("Location: connexion.php");
+    exit();
+}
+
+// Maintenant que l'utilisateur est connecté, von affiche le contenu de la page du projet
+?>
 <!Doctype html>
 <html>
 <head>
@@ -50,6 +63,7 @@
       </nav>
 
 <section >
+<p>Bienvenue sur la page des recherches, <?= $_SESSION['prenom'] ?> <?= $_SESSION['nom'] ?>!</p><br>
   <form id="searchForm">
     <label for="searchInput">Rechercher :</label>
     <input type="text" id="searchInput" name="searchInput" placeholder="Entrez le nom, numéro de téléphone, email ou profession">
