@@ -1,3 +1,4 @@
+
 <?php
 session_start();
 
@@ -25,18 +26,21 @@ $resultat = $connexion->query($sql);
 if ($resultat->num_rows > 0) {
     $utilisateur = $resultat->fetch_assoc();
     if (password_verify($mot_de_passe, $utilisateur['mot_de_passe'])) {
-        echo "Connexion réussie ! Bienvenue, " . $utilisateur['prenom'] . " " . $utilisateur['nom'] . "!";
-          // Redirection vers la page projet
-          header("Location: projets.php");
-          exit();
-      } else {
-          echo "Mot de passe incorrect.";
-      }
-  } else {
-      echo "Utilisateur non trouvé.";
-  }
-  
-  // Fermeture de la connexion
-  $connexion->close();
-  ?>
+        // Stockage des informations de l'utilisateur dans la session
+        $_SESSION['email'] = $email;
+        $_SESSION['prenom'] = $utilisateur['prenom'];
+        $_SESSION['nom'] = $utilisateur['nom'];
+
+        // Redirection vers la page projet
+        header("Location: projets.php");
+        exit();
+    } else {
+        echo "Mot de passe incorrect.";
+    }
+} else {
+    echo "Utilisateur non trouvé.";
+}
+
+// Fermeture de la connexion
+$connexion->close();
 ?>

@@ -1,4 +1,3 @@
-
 <?php
 session_start();
 
@@ -9,7 +8,55 @@ if (!isset($_SESSION['email'])) {
     exit();
 }
 
-// Maintenant que l'utilisateur est connecté, von affiche le contenu de la page du projet
+// Initialisation d'une variable pour stocker les résultats de la recherche
+$searchResults = "";
+
+// Vérification si le formulaire de recherche a été soumis
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Connexion à la base de données
+    $serveur = "localhost";
+    $utilisateur = "root";
+    $mot_de_passe = "";
+    $base_de_donnees = "private_crm";
+
+    $connexion = new mysqli($serveur, $utilisateur, $mot_de_passe, $base_de_donnees);
+
+    // Vérification de la connexion
+    if ($connexion->connect_error) {
+        die("La connexion a échoué : " . $connexion->connect_error);
+    }
+
+    // Récupération de la valeur de recherche depuis le formulaire
+    $searchInput = $_POST['searchInput'];
+
+    // Requête SQL pour rechercher les utilisateurs correspondant à la recherche
+    $sql = "SELECT * FROM utilisateurs WHERE 
+            nom LIKE '%$searchInput%' OR 
+            prenom LIKE '%$searchInput%' OR 
+            profession LIKE '%$searchInput%' OR 
+            email LIKE '%$searchInput%' OR 
+            telephone LIKE '%$searchInput%'";
+
+    $resultat = $connexion->query($sql);
+
+    if ($resultat->num_rows > 0) {
+        // Construction de la variable contenant les résultats de la recherche
+        while ($utilisateur = $resultat->fetch_assoc()) {
+            $searchResults .= "<p>";
+            $searchResults .= "Nom: " . $utilisateur['nom'] . "<br>";
+            $searchResults .= "Prénom: " . $utilisateur['prenom'] . "<br>";
+            $searchResults .= "Profession: " . $utilisateur['profession'] . "<br>";
+            $searchResults .= "Email: " . $utilisateur['email'] . "<br>";
+            $searchResults .= "Téléphone: " . $utilisateur['telephone'] . "<br>";
+            $searchResults .= "</p>";
+        }
+    } else {
+        $searchResults = "Aucun résultat trouvé.";
+    }
+
+    // Fermeture de la connexion
+    $connexion->close();
+}
 ?>
 <!Doctype html>
 <html>
@@ -64,16 +111,18 @@ if (!isset($_SESSION['email'])) {
 
 <section >
 <p>Bienvenue sur la page des recherches, <?= $_SESSION['prenom'] ?> <?= $_SESSION['nom'] ?>!</p><br>
-  <form id="searchForm">
-    <label for="searchInput">Rechercher :</label>
-    <input type="text" id="searchInput" name="searchInput" placeholder="Entrez le nom, numéro de téléphone, email ou profession">
-    <button type="submit">Rechercher</button>
-</form>
-
-<!-- Conteneur pour afficher les résultats de la recherche -->
-<div id="searchResults">
-    <!-- Les résultats de la recherche seront affichés ici -->
-</div>
+<form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+        <label for="searchInput">Rechercher :</label>
+        <input type="text" id="searchInput" name="searchInput" placeholder="Entrez le nom, profession, ou numéro de tél">
+        <button type="submit">Rechercher</button>
+    </form>
+ <!-- Affichage des résultats de la recherche -->
+ <div id="searchResults">
+        <?php
+        // Affichage des résultats de la recherche
+        echo $searchResults;
+        ?>
+    </div>
 
 <!-- Inclure ici les liens vers les fichiers JavaScript nécessaires -->
 <script src="script.js"></script>
